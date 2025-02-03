@@ -1,5 +1,3 @@
-require('dotenv').config(); 
-
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 
@@ -40,40 +38,40 @@ class UserService {
             throw error;
         }
     }
-    async updateUser(id, data) {
-        try {
-            // Certifique-se de que o usuário existe
-            const user = await User.findByPk(id);
+    // async updateUser(id, data) {
+    //     try {
+    //         // Certifique-se de que o usuário existe
+    //         const user = await User.findByPk(id);
     
-            if (!user) {
-                return null;
-            }
+    //         if (!user) {
+    //             return null;
+    //         }
     
-            // Verifica se o campo "password" está presente nos dados
-            if (data.password) {
-                // Criptografa o password
-                data.password = await bcrypt.hash(data.password, 10);
-            }
-            return await user.update(data);
-        } catch (error) {
-            console.error('Error updating user:', error.message);
-            throw error;
-        }
-    }
+    //         // Verifica se o campo "password" está presente nos dados
+    //         if (data.password) {
+    //             // Criptografa o password
+    //             data.password = await bcrypt.hash(data.password, 10);
+    //         }
+    //         return await user.update(data);
+    //     } catch (error) {
+    //         console.error('Error updating user:', error.message);
+    //         throw error;
+    //     }
+    // }
 
-    async deleteUser(id) {
-        try {
-            const user = await User.findByPk(id);
-            if (!user) {
-                return null;
-            }
-            await user.destroy();
-            return { message: 'user deleted successfully.' };
-        } catch (error) {
-            console.error('Error deleting user:', error.message);
-            throw error;
-        }
-    }
+    // async deleteUser(id) {
+    //     try {
+    //         const user = await User.findByPk(id);
+    //         if (!user) {
+    //             return null;
+    //         }
+    //         await user.destroy();
+    //         return { message: 'user deleted successfully.' };
+    //     } catch (error) {
+    //         console.error('Error deleting user:', error.message);
+    //         throw error;
+    //     }
+    // }
     
 }
 

@@ -1,10 +1,3 @@
-
-
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv')
-dotenv.config({ path: './.env'});
-
-
 const verifyToken = require('../middlewares/verifyToken'); // Import the middleware
 
 const DriverRouteService = require('../services/driverRouteService');
@@ -18,85 +11,77 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/assign-route', verifyToken, async (req, res) => {
-  const driverId = parseInt(req.id, 10); // Certifique-se de que é um número.
+  const driverId = parseInt(req.id, 10);
   const { routeId } = req.body;
   
-    if (!routeId) {
-      return res.status(400).json({
+  if (!routeId) {
+    return res.status(400).json({
+      success: false,
+      message: 'routeId is required.',
+    });
+  }
+  
+  try {
+    const assignedRoute = await driverRouteService.assignRouteToDriver(driverId, routeId);
+  
+    if (!assignedRoute) {
+      return res.status(404).json({
         success: false,
-        message: 'routeId é obrigatório.',
+        message: 'Driver or route not found, or route is already assigned.',
       });
     }
   
-    try {
-      const assignedRoute = await driverRouteService.assignRouteToDriver(driverId, routeId);
-  
-      if (!assignedRoute) {
-        return res.status(404).json({
-          success: false,
-          message: 'Motorista ou rota não encontrada, ou rota já está atribuída.',
-        });
-      }
-  
-      return res.status(200).json({
-        success: true,
-        message: 'Rota atribuída com sucesso ao motorista.',
-        data: assignedRoute,
-      });
-    } catch (error) {
-      console.error('Erro ao atribuir rota ao motorista:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno ao atribuir rota ao motorista.',
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'Route successfully assigned to the driver.',
+      data: assignedRoute,
+    });
+  } catch (error) {
+    console.error('Error assigning route to driver:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal error assigning route to driver.',
+    });
+  }
 });
 
-router.post('/unssign-route', verifyToken, async (req, res) => {
-  const driverId = parseInt(req.id, 10); // Certifique-se de que é um número.
+router.post('/unassign-route', verifyToken, async (req, res) => {
+  const driverId = parseInt(req.id, 10);
 
   try {
-    const assignedRoute = await driverRouteService.unssignRouteToDriver(driverId);
+    const assignedRoute = await driverRouteService.unassignRouteFromDriver(driverId);
 
     if (!assignedRoute) {
       return res.status(404).json({
         success: false,
-        message: 'Motorista ou rota não encontrada, ou rota já está atribuída.',
+        message: 'Driver or route not found, or route is already unassigned.',
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: 'Rota retirada do motorista !.',
+      message: 'Route successfully removed from the driver!',
       data: assignedRoute,
     });
   } catch (error) {
-    console.error('Erro ao retirar a rota ao motorista:', error);
+    console.error('Error removing route from driver:', error);
     return res.status(500).json({
       success: false,
-      message: 'Erro interno ao retirar rota ao motorista.',
+      message: 'Internal error removing route from driver.',
     });
   }
 });
 
 router.get('/driver/status', verifyToken, async (req, res) => {
   try {
+    const driverId = req.id;
 
-    const token = req.headers.authorization?.split(' ')[1]; // Pega o token no cabeçalho
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
-
-    // Pega o driverId do middleware
-    const driverId = decoded.id; //parseInt(req.id, 10); // Certifique-se de que é um número.
-    // console.log('ID decodificado do token:', driverId); // Adiciona o print do ID para depuração
-
-    // Salva a localização usando o serviço
     const status = await driverRouteService.getBindedDriverStatus(driverId);
 
     res.status(201).json(status);
   } catch (err) {
-    console.error('Erro ao verificar status:', err);
-    res.status(500).json({ error: 'Erro ao verificar status' });
+    console.error('Error checking status:', err);
+    res.status(500).json({ error: 'Error checking status' });
   }
 });
 
@@ -108,8 +93,8 @@ router.get('/route/getBindedRouteStarted_at/:routeId', async (req, res) => {
 
     res.status(201).json(status);
   } catch (err) {
-    console.error('Erro ao verificar status:', err);
-    res.status(500).json({ error: 'Erro ao verificar status' });
+    console.error('Error checking status:', err);
+    res.status(500).json({ error: 'Error checking status' });
   }
 });
 

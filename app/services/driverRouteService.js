@@ -1,10 +1,9 @@
-require('dotenv').config(); 
 const moment = require('moment');
 const DriverRoute = require('../models/driversRoutes');
 const Driver = require('../models/drivers');
 const Route = require('../models/routesModel');
 
-class driverRouteService {
+class DriverRouteService {
     
     async getAllBindedRoutes() {
         return await DriverRoute.findAll();
@@ -27,19 +26,19 @@ class driverRouteService {
     }
 
     async assignRouteToDriver(driverId, routeId) {
-        // Verifica se o motorista existe
+        // Check if the driver exists
         const driver = await Driver.findByPk(driverId);
         if (!driver) {
-            throw new Error('Motorista não encontrado');
+            throw new Error('Driver not found');
         }
 
-        // Verifica se a rota existe
+        // Check if the route exists
         const route = await Route.findByPk(routeId);
         if (!route) {
-            throw new Error('Rota não encontrada');
+            throw new Error('Route not found');
         }
 
-        // Verifica se já existe uma associação
+        // Check if the assignment already exists
         const existingAssignment = await DriverRoute.findOne({
             where: { driverId, routeId },
         });
@@ -49,20 +48,20 @@ class driverRouteService {
         }
 
         const status = 1;
-        // Cria a associação
+        // Create the assignment
         const newAssignment = await DriverRoute.create({ driverId, routeId, status });
         await Route.update({ status: 1 }, { where: { id: routeId } });
         return newAssignment;
     }
     
-    async unssignRouteToDriver(driverId) {
-        // Verifica se o motorista existe
+    async unassignRouteFromDriver(driverId) {
+        // Check if the driver exists
         const driver = await Driver.findByPk(driverId);
         if (!driver) {
-            throw new Error('Motorista não encontrado');
+            throw new Error('Driver not found');
         }
 
-        // Verifica se já existe uma associação
+        // Check if there is an existing assignment
         const existingAssignment = await DriverRoute.findOne({
             where: { driverId },
         });
@@ -81,4 +80,4 @@ class driverRouteService {
     }
 };
 
-module.exports = driverRouteService;
+module.exports = DriverRouteService;

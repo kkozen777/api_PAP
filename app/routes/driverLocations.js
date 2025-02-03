@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const DriverLocationService = require('../services/driverLocationService');
 const driverLocationService = new DriverLocationService();
-const verifyToken = require('../middlewares/verifyToken'); // Middleware para validar token
+const verifyToken = require('../middlewares/verifyToken'); // middleware para validar o token
 
 
 router.get('/', async (req, res) => {
@@ -52,10 +52,10 @@ router.post('/', verifyToken, async (req, res) => {
     try {
       const { latitude, longitude } = req.body;
   
-      // Pega o driverId do middleware
+      // pede o driverId ao middleware
       const driverId = req.id;
   
-      // Salva a localização usando o serviço
+      // salva a localização
       const location = await driverLocationService.createDriverLocation({
         driverId,
         latitude,
@@ -64,8 +64,8 @@ router.post('/', verifyToken, async (req, res) => {
   
       res.status(201).json(location);
     } catch (err) {
-      console.error('Erro ao salvar localização:', err);
-      res.status(500).json({ error: 'Erro ao salvar localização' });
+      console.error('Error saving location:', err);
+      res.status(500).json({ error: 'Error saving location' });
     }
   });
   

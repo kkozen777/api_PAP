@@ -4,7 +4,7 @@ const router = express.Router();
 const PathService = require('../services/pathService');
 const pathService = new PathService();
 
-// Rota para listar todos os Paths
+// Rota para mostrar todos os Paths
 router.get('/', async (req, res) => {
     try {
         const paths = await pathService.getAllPaths();
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Rota para buscar um Path pelo ID
+// Rota para retornar um path por id
 router.get('/:id', async (req, res) => {
     try {
         const path = await pathService.getPathById(req.params.id);

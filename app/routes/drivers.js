@@ -17,13 +17,12 @@ router.get('/getDriverName', verifyToken, async (req, res) => {
     try {
   
       const id = req.id;
-      // Salva a localização usando o serviço
       const name = await driverService.getDriverName(id);
   
       res.status(201).json(name);
     } catch (err) {
-      console.error('Erro ao receber o nom do driver:', err);
-      res.status(500).json({ error: 'Erro ao receber o nome do driver' });
+      console.error('Error getting drivers name:', err);
+      res.status(500).json({ error: 'Error getting drivers name' });
     }
   });
 

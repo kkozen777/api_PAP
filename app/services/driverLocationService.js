@@ -1,5 +1,3 @@
-require('dotenv').config(); 
-7
 const DriverLocation = require('../models/driversLocations');
 const DriverRoutes = require('../models/driversRoutes')
 
@@ -19,7 +17,7 @@ class DriverLocationService {
     async getAllLocationsPerRoute(route_Id) {
         const routeDriver = await DriverRoutes.findOne({where:{routeId: route_Id }})
         if (!routeDriver) {
-            throw new Error('Nenhum motorista associado a esta rota');
+            throw new Error('No drivers associated');
         }
         return await DriverLocation.findAll({
             where: { driverId: routeDriver.driverId },
@@ -30,7 +28,7 @@ class DriverLocationService {
     async getLatestLocation(route_id) {
         const routeDriver = await DriverRoutes.findOne({where:{routeId: route_id }})
         if (!routeDriver) {
-            throw new Error('Nenhum motorista associado a esta rota');
+            throw new Error('No driver associated');
         }
         return await DriverLocation.findOne({
             where: { driverId: routeDriver.driverId },

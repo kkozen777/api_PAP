@@ -14,8 +14,8 @@ dotenv.config({ path: './.env'});
 
 const sequelize = new Sequelize(
   process.env.DB_NAME, // Nome do banco de dados
-  process.env.DB_USER, // Nome de usuário do banco
-  process.env.DB_PASSWORD, // Senha do banco
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST, // Host do banco (ex: localhost)
     dialect: 'mysql', // Tipo do banco (ex: mysql)

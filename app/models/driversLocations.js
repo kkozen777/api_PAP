@@ -18,7 +18,7 @@ const DriverLocation = sequelize.define('DriverLocation', {
       timestamp: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW, // Define a data e hora atual como padrão
+        defaultValue: DataTypes.NOW, // Define a data e hora atual
       },
     }, {
       tableName: 'driversLocations',
@@ -26,7 +26,7 @@ const DriverLocation = sequelize.define('DriverLocation', {
       indexes: [
         {
           unique: true,
-          fields: ['driverId', 'timestamp'], // Cria a restrição UNIQUE
+          fields: ['driverId', 'timestamp'], // é UNIQUE
           name: 'unique_driver_timestamp', // Nome opcional para o índice
         },
       ],

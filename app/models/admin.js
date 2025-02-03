@@ -12,7 +12,7 @@ const Admin = sequelize.define('Admin', {
     },
 }, {
     tableName: 'admins', // Database table name
-    timestamps: true,  // Automatically adds createdAt and updatedAt
+    timestamps: true, // Automatically adds createdAt and updatedAt
 });
 
 module.exports = Admin;

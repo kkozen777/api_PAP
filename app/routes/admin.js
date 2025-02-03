@@ -9,19 +9,17 @@ const { updateRouteSchema } = require('../middlewares/schemas/routesSchema.js');
 const { createLineSchema } = require('../middlewares/schemas/lines.js');
 const { updateLineSchema } = require('../middlewares/schemas/lines.js');
 
-// const { createPathSchema } = require('../middlewares/schemas/stops.js');
-// const { updatePathSchema } = require('../middlewares/schemas/stops.js');
+// const { createPathSchema } = require('../middlewares/schemas/path.js');
+// const { updatePathSchema } = require('../middlewares/schemas/path.js');
 
 const AdminService = require('../services/adminService');
 
-// Instantiate the service
 const adminService = new AdminService();
 const express = require('express');
 const router = express.Router();
 
-// POST /drivers 
 router.post('/createDriver', validate(createDriverSchema), async (req, res) => {
-    const { driverNumber, password, name } = req.body;
+    const { driverNumber, password, name } = req.body; //get values from the body
     try {
         const Driver = await adminService.createDriver(driverNumber, password, name);
         if(!Driver){
@@ -33,7 +31,6 @@ router.post('/createDriver', validate(createDriverSchema), async (req, res) => {
     }
 });
 
-// PATCH /drivers/updateDriver/:id
 router.patch('/updateDriver/:id', validate(updateDriverSchema), async (req, res) => {
     try {
         const { id } = req.params; // Get driver ID from URL
@@ -54,7 +51,6 @@ router.patch('/updateDriver/:id', validate(updateDriverSchema), async (req, res)
     }
 });
 
-// DELETE /drivers/deleteDriver/:id
 router.delete('/deleteDriver/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -84,24 +80,19 @@ router.post('/createLine',validate(createLineSchema), async (req, res) => {
     }
 });
 
-// PATCH /routes/updateRoute/:id
 router.patch('/updateLine/:id', validate(updateLineSchema), async (req, res) => {
     try {
-        const { id } = req.params; // Get route ID from URL
+        const { id } = req.params; // Get Line ID from URL
         const updates = req.body; // Get update data from request body
-        const updatedRoute = await adminService.updateLine(id, updates);
+        const updatedLine = await adminService.updateLine(id, updates);
 
-        if (updatedRoute == null) {
-            return res.status(404).json({ error: 'Route does not exist.' });
+        if (updatedLine == null) {
+            return res.status(404).json({ error: 'Line does not exist.' });
         }
         // Return success response
-        res.status(200).json({ message: 'Route updated successfully', updatedRoute });
+        res.status(200).json({ message: 'Line updated successfully', updatedLine });
     } catch (error) {
-        // Handle errors
-        if (error.name === 'SequelizeUniqueConstraintError') {
-            return res.status(400).json({ message: 'routeNumber is already in use' });
-        }
-        res.status(500).json({ error: 'Error updating route', details: error.message });
+        res.status(500).json({ error: 'Error updating line', details: error.message });
     }
 });
 
@@ -112,13 +103,13 @@ router.delete('/deleteLine/:id', async (req, res) => {
         const result = await adminService.deleteLine(id);
 
         if (result == null) {
-            return res.status(404).json({ error: 'route does not exist.' });
+            return res.status(404).json({ error: 'line does not exist.' });
         }
 
         return res.status(200).json(result);
     } catch (error) {
-        console.error('Error deleting user:', error.message);
-        return res.status(500).json({ error: 'Error deleting user.', details: error.message });
+        console.error('Error deleting line:', error.message);
+        return res.status(500).json({ error: 'Error deleting line.', details: error.message });
     }
 });
 
@@ -129,13 +120,11 @@ router.post('/createRoute', validate(createRouteSchema), async (req, res) => {
         const newRoute = await adminService.createRoute(lineId, pathId, name, start_time, end_time);
         res.status(201).json({ message: 'Route created successfully', route: newRoute });
     } catch (error) {
-        // Captura o erro lançado pelo serviço
         console.error('Error creating Route:', error);
         res.status(400).json({ error: 'Error creating Route', details: error.message });
     }
 });
 
-// PATCH /routes/updateRoute/:id
 router.patch('/updateRoute/:id', validate(updateRouteSchema), async (req, res) => {
     try {
         const { id } = req.params; // Get route ID from URL
@@ -148,10 +137,6 @@ router.patch('/updateRoute/:id', validate(updateRouteSchema), async (req, res) =
         // Return success response
         res.status(200).json({ message: 'Route updated successfully', updatedRoute });
     } catch (error) {
-        // Handle errors
-        if (error.name === 'SequelizeUniqueConstraintError') {
-            return res.status(400).json({ message: 'routeNumber is already in use' });
-        }
         res.status(500).json({ error: 'Error updating route', details: error.message });
     }
 });
@@ -168,12 +153,11 @@ router.delete('/deleteRoute/:id', async (req, res) => {
 
         return res.status(200).json(result);
     } catch (error) {
-        console.error('Error deleting user:', error.message);
-        return res.status(500).json({ error: 'Error deleting user.', details: error.message });
+        console.error('Error deleting route:', error.message);
+        return res.status(500).json({ error: 'Error deleting route.', details: error.message });
     }
 });
 
-// POST /Stop 
 router.post('/createPath', async (req, res) => {
     const { name, coordinates } = req.body;
     try {
@@ -189,7 +173,7 @@ router.post('/createPath', async (req, res) => {
 
 router.patch('/updatePath/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Get route ID from URL
+        const { id } = req.params; // Get path ID from URL
         const updates = req.body; // Get update data from request body
         const path = await adminService.updatePath(id, updates);
         if (path) {

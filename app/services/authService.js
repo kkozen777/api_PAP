@@ -237,10 +237,6 @@ class AuthService {
             throw error;
         }
     }
-
-
 }
-
-
 
 module.exports = AuthService;

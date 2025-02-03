@@ -1,6 +1,3 @@
-require('dotenv').config(); 
-
-// services/pathService.js
 const Path = require('../models/paths');
 
 class PathService {

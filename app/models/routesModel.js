@@ -1,4 +1,3 @@
-// models/Route.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database/db');
 // const Line = require('./lines'); // Importando o modelo Line

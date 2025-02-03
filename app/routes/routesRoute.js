@@ -22,7 +22,7 @@ router.get('/availableRoutes/:lineId', async (req, res) => {
         return res.status(404).json({
           success: false,
           message: 'Nenhuma rota disponível para a linha especificada',
-        });
+        }); 
       }
       
       return res.status(200).json({
@@ -43,7 +43,7 @@ router.get('/getRoutesBylineId/:lineId', async (req, res) => {
     
     try {
       // Obtém as rotas disponíveis com base no ID da linha
-      const availableRoutes = await routeService.getRoutePerline(lineId);
+      const availableRoutes = await routeService.getRoutePerLine(lineId);
       
       if (availableRoutes.length === 0) {
         return res.status(404).json({
