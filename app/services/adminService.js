@@ -1,13 +1,13 @@
+// importar os models que vão ser utilizados
 const Driver = require('../models/drivers');
 const bcrypt = require('bcrypt');
 const Route = require('../models/routesModel');
 const Line = require('../models/lines');
 const Path = require('../models/paths')
-// const Path = require('../models/paths');
 
-
+// classe criada para guardar todas estas funçõesA
 class AdminService {
-    // Create a new Driver
+    // criar um novo motorista
     async createDriver(driverNumber, password, name) {
         try {
             const existingDriver = await Driver.findOne({ where: { driverNumber } });
@@ -24,19 +24,18 @@ class AdminService {
             throw error;
         }
     }
-    //UPDATE DRIVER
+    //altera os valores de um motorista
     async updateDriver(id,data) {
         try {
-            // Certifique-se de que o usuário existe
             const driver = await Driver.findByPk(id);
     
             if (!driver) {
                 return null;
             }
     
-            // Verifica se o campo "password" está presente nos dados
+            // Verifica se o campo "password" está presente nos dados, se estiver, criptografa
             if (data.password) {
-                // Criptografa o password
+                // Criptografa a password
                 data.password = await bcrypt.hash(data.password, 10);
             }
             return await driver.update(data);
@@ -45,9 +44,11 @@ class AdminService {
             throw error;
         }
     }
+    //elimina um motorista
     async deleteDriver(id) {
         try {
             const driver = await Driver.findByPk(id);
+            //caso o motorista já não exista, retorna null
             if (!driver) {
                 return null;
             }
@@ -59,10 +60,11 @@ class AdminService {
         }
     }
 
-    //LINES
+    //cria uma linha
     async createLine(name, schedules) {
         try {
-            const existingLine = await Line.findOne({ where: { schedules } });
+            //verifica se a linha que esta a ser criada ja existe
+            const existingLine = await Line.findOne({ where: { name } });
             if(existingLine){
                 return null;
             }
@@ -74,7 +76,7 @@ class AdminService {
             throw error;
         }
     }
-    
+    // atualiza uma linha
     async updateLine(id, data) {
         const line = await Line.findByPk(id);
         if (line) {
@@ -82,7 +84,7 @@ class AdminService {
         }
         throw new Error('Line not found');
     }
-
+    //elimina uma linha
     async deleteLine(id) {
         const line = await Line.findByPk(id);
         if (line) {
@@ -91,12 +93,12 @@ class AdminService {
         throw new Error('Line not found');
     }
 
-    //ROUTES
+    //criar rota
     async createRoute(lineId, pathId, name, start_time, end_time) {
         const line = await Line.findByPk(lineId);
-        const path = 1;
+        const path = await Path.findByPk(pathId);
+        //status 0 predifinido
         const status = 0;
-        // const path = await Path.findByPk(pathId);
     
         // Verifica se a linha e o caminho existem
         if (!line || !path) {
@@ -108,7 +110,9 @@ class AdminService {
         return newRoute;
     }
 
+    //Atualiza rota
     async updateRoute(id, data) {
+        //verifica se a rota existe
         const route = await Route.findByPk(id);
         if (route) {
             return await route.update(data);
@@ -116,39 +120,34 @@ class AdminService {
         throw new Error('Route not found');
     }
 
+    //elimna a rota
     async deleteRoute(id) {
-        const deletedCount = await Route.destroy({
-          where: { id }, // Especifica qual registro deve ser apagado
-        });
-      
-        if (deletedCount === 0) {
-          throw new Error('Route not found');
+        const route = await Route.findByPk(id);
+        if (route) {
+            return await route.destroy();
         }
+        throw new Error('Route not found');
+    }
       
-        return { message: 'Route deleted successfully' };
-      }
-      
-
+    //criar um caminho
     async createPath(name, coordinates) {
         const path = await Path.findByPk(name);
-        // const path = await Path.findByPk(pathId);
     
-        // Verifica se a linha e o caminho existem
+        // Verifica se o caminho existe
         if (path) {
-            throw new Error("Line or Path not found");
+            throw new Error("path already exists");
         }
     
-        // Cria a nova rota
+        // Cria o caminho
         const newPath = await Path.create({ name, coordinates });
         return newPath;
     }
-
+    //atualiza um caminho
     async updatePath(id, data) {
         const path = await Path.findByPk(id);
         if (path) {
-            // Especificar que a atualização deve ocorrer no registro com o id fornecido
             const newPath = await Path.update(data, {
-                where: { id: id }  // A condição WHERE precisa ser fornecida aqui
+                where: { id: id }
             });
             return newPath;
         }

@@ -1,78 +1,48 @@
+// Importação do modelo de utilizadores
 const User = require('../models/users');
-const bcrypt = require('bcrypt');
 
 class UserService {
+    
+    // Método para obter todos os utilizadores registados na base de dados
     async getAllUsers() {
         try {
-            const users = await User.findAll();
+            const users = await User.findAll(); // Obtém todos os utilizadores
             return users;
         } catch (error) {
-            console.error('Error fetching users:', error.message);
-            throw error;
+            console.error('Error fetching users:', error.message); 
+            throw error; // Lança o erro para ser tratado externamente
         }
     }
 
+    // Método para obter o nome de um utilizador pelo seu ID
     async getUserName(id) {
         try {
-            const user = await User.findByPk(id);
+            const user = await User.findByPk(id); // Procura um utilizador pelo ID
             if (!user) {
-                throw new Error('User not found');
+                throw new Error('User not found'); // Lança um erro se o utilizador não for encontrado
             }
-            return user.name;
+            return user.name; // Retorna apenas o nome do utilizador
         } catch (error) {
             console.error('Error fetching User by ID:', error.message);
-            throw error;
+            throw error; // Lança o erro para ser tratado externamente
         }
     }
 
-    // Fetch a single user by ID
+    // Método para obter um utilizador pelo seu ID
     async getUserById(userId) {
         try {
-            const user = await User.findByPk(userId);
+            const user = await User.findByPk(userId); // Procura um utilizador pelo ID
             if (!user) {
-                throw new Error('User not found');
+                throw new Error('User not found'); // Lança um erro se o utilizador não for encontrado
             }
-            return user;
+            return user; // Retorna o objeto do utilizador encontrado
         } catch (error) {
-            console.error('Error fetching user by ID:', error.message);
-            throw error;
+            console.error('Error fetching user by ID:', error.message); 
+            throw error; // Lança o erro para ser tratado externamente
         }
     }
-    // async updateUser(id, data) {
-    //     try {
-    //         // Certifique-se de que o usuário existe
-    //         const user = await User.findByPk(id);
-    
-    //         if (!user) {
-    //             return null;
-    //         }
-    
-    //         // Verifica se o campo "password" está presente nos dados
-    //         if (data.password) {
-    //             // Criptografa o password
-    //             data.password = await bcrypt.hash(data.password, 10);
-    //         }
-    //         return await user.update(data);
-    //     } catch (error) {
-    //         console.error('Error updating user:', error.message);
-    //         throw error;
-    //     }
-    // }
-
-    // async deleteUser(id) {
-    //     try {
-    //         const user = await User.findByPk(id);
-    //         if (!user) {
-    //             return null;
-    //         }
-    //         await user.destroy();
-    //         return { message: 'user deleted successfully.' };
-    //     } catch (error) {
-    //         console.error('Error deleting user:', error.message);
-    //         throw error;
-    //     }
-    // }
     
 }
 
+// Exporta a classe UserService para que possa ser utilizada noutros ficheiros
 module.exports = UserService;

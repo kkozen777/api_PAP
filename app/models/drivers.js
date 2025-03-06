@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database/db'); // Sequelize instance
+const sequelize = require('../config/database/db'); // chama o sequelize com a config da bd
 
 const Driver = sequelize.define('Driver', {
     driverNumber: {
@@ -16,8 +16,8 @@ const Driver = sequelize.define('Driver', {
         allowNull: false,
     },
 }, {
-    tableName: 'drivers', // Database table name
-    timestamps: true,  // Automatically adds createdAt and updatedAt
+    tableName: 'drivers', // nome da tabela
+    timestamps: true,  // adiciona automaticamente updatedAt e createdAt
 });
 
 module.exports = Driver;

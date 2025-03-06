@@ -1,4 +1,4 @@
-const validate = require('../middlewares/validation'); // Import the middleware
+const validate = require('../middlewares/validation'); // importe do middleware
 
 const { createDriverSchema } = require('../middlewares/schemas/drivers');
 const { updateDriverSchema } = require('../middlewares/schemas/drivers');
@@ -19,7 +19,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/createDriver', validate(createDriverSchema), async (req, res) => {
-    const { driverNumber, password, name } = req.body; //get values from the body
+    const { driverNumber, password, name } = req.body; //guarda os valores recebidos no body
     try {
         const Driver = await adminService.createDriver(driverNumber, password, name);
         if(!Driver){
@@ -33,17 +33,17 @@ router.post('/createDriver', validate(createDriverSchema), async (req, res) => {
 
 router.patch('/updateDriver/:id', validate(updateDriverSchema), async (req, res) => {
     try {
-        const { id } = req.params; // Get driver ID from URL
-        const updates = req.body; // Get update data from request body
+        const { id } = req.params; //recebe o driverid da url
+        const updates = req.body; 
         const updatedDriver = await adminService.updateDriver(id,updates);
 
         if (updatedDriver == null) {
             return res.status(404).json({ error: 'driver does not exist.' });
         }
-        // Return success response
+        // Retorna sucesso
         res.status(200).json({ message: 'Driver updated successfully', updatedDriver });
     } catch (error) {
-        // Handle errors
+        // lida com este erro especifico
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({ message: 'driverNumber is already in use' });
         }
@@ -82,14 +82,13 @@ router.post('/createLine',validate(createLineSchema), async (req, res) => {
 
 router.patch('/updateLine/:id', validate(updateLineSchema), async (req, res) => {
     try {
-        const { id } = req.params; // Get Line ID from URL
-        const updates = req.body; // Get update data from request body
+        const { id } = req.params;
+        const updates = req.body;
         const updatedLine = await adminService.updateLine(id, updates);
 
         if (updatedLine == null) {
             return res.status(404).json({ error: 'Line does not exist.' });
         }
-        // Return success response
         res.status(200).json({ message: 'Line updated successfully', updatedLine });
     } catch (error) {
         res.status(500).json({ error: 'Error updating line', details: error.message });
@@ -127,14 +126,13 @@ router.post('/createRoute', validate(createRouteSchema), async (req, res) => {
 
 router.patch('/updateRoute/:id', validate(updateRouteSchema), async (req, res) => {
     try {
-        const { id } = req.params; // Get route ID from URL
-        const updates = req.body; // Get update data from request body
+        const { id } = req.params;
+        const updates = req.body; 
         const updatedRoute = await adminService.updateRoute(id, updates);
 
         if (updatedRoute == null) {
             return res.status(404).json({ error: 'Route does not exist.' });
         }
-        // Return success response
         res.status(200).json({ message: 'Route updated successfully', updatedRoute });
     } catch (error) {
         res.status(500).json({ error: 'Error updating route', details: error.message });
@@ -173,8 +171,8 @@ router.post('/createPath', async (req, res) => {
 
 router.patch('/updatePath/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Get path ID from URL
-        const updates = req.body; // Get update data from request body
+        const { id } = req.params;
+        const updates = req.body;
         const path = await adminService.updatePath(id, updates);
         if (path) {
             res.status(200).json(path);

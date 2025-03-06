@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database/db'); // Sequelize instance
+const sequelize = require('../config/database/db'); // chama o sequelize com a config da bd
 
 const Admin = sequelize.define('Admin', {
     name: {
@@ -11,8 +11,8 @@ const Admin = sequelize.define('Admin', {
         allowNull: false,
     },
 }, {
-    tableName: 'admins', // Database table name
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    tableName: 'admins', // nome da tabela
+    timestamps: true, // adiciona automaticamente updatedAt e createdAt
 });
 
 module.exports = Admin;

@@ -1,68 +1,68 @@
 const RouteService = require('../services/routeService');
 
-// Instantiate the service
+// chama o service
 const routeService = new RouteService();
 const express = require('express');
 const router = express.Router();
 
 // GET /routes
 router.get('/', async (req, res) => {
-    const routes = await routeService.getAllRoutes();
-    res.status(201).json({ message: 'Here are all the routes', routes });
+  const routes = await routeService.getAllRoutes();
+  res.status(201).json({ message: 'Here are all the routes', routes });
 });
 
 router.get('/availableRoutes/:lineId', async (req, res) => {
-    const { lineId } = req.params;
+  const { lineId } = req.params;
+  
+  try {
+    // Obtém as rotas disponíveis com base no ID da linha
+    const availableRoutes = await routeService.getAvailableRoutes(lineId);
     
-    try {
-      // Obtém as rotas disponíveis com base no ID da linha
-      const availableRoutes = await routeService.getAvailableRoutes(lineId);
-      
-      if (availableRoutes.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: 'Nenhuma rota disponível para a linha especificada',
-        }); 
-      }
-      
-      return res.status(200).json({
-        success: true,
-        data: availableRoutes,
-      });
-    } catch (error) {
-      console.error('Erro no request:', error);
-      return res.status(500).json({
+    if (availableRoutes.length === 0) {
+      return res.status(404).json({
         success: false,
-        message: 'Erro ao mostrar as rotas disponíveis',
-      });
+        message: 'Nenhuma rota disponível para a linha especificada',
+      }); 
     }
+    
+    return res.status(200).json({
+      success: true,
+      data: availableRoutes,
+    });
+  } catch (error) {
+    console.error('Erro no request:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao mostrar as rotas disponíveis',
+    });
+  }
 });
   
 router.get('/getRoutesBylineId/:lineId', async (req, res) => {
-    const { lineId } = req.params;
+  const { lineId } = req.params;
+  
+  try {
+    // Obtém as rotas disponíveis com base no ID da linha
+    const availableRoutes = await routeService.getRoutePerLine(lineId);
     
-    try {
-      // Obtém as rotas disponíveis com base no ID da linha
-      const availableRoutes = await routeService.getRoutePerLine(lineId);
-      
-      if (availableRoutes.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: 'Nenhuma rota disponível para a linha especificada',
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        data: availableRoutes,
-      });
-    } catch (error) {
-      console.error('Erro no request:', error);
-      return res.status(500).json({
+    if (availableRoutes.length === 0) {
+      return res.status(404).json({
         success: false,
-        message: 'Erro ao mostrar as rotas disponíveis',
+        message: 'Nenhuma rota disponível para a linha especificada',
       });
     }
+    
+    return res.status(200).json({
+      success: true,
+      data: availableRoutes,
+    });
+  } catch (error) {
+    console.error('Erro no request:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao mostrar as rotas disponíveis',
+    });
+  }
 });
 
 router.get('/driver/:driverId', async (req, res) => {
@@ -81,7 +81,7 @@ router.get('/driver/:driverId', async (req, res) => {
 
 
 
-// GET bus by id
+// procura rota pelo id
 router.get('/getRoute/:id', async (req, res) => {
     try {
         const { id } = req.params;

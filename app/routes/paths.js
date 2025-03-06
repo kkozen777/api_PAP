@@ -1,4 +1,3 @@
-// routes/pathRoutes.js
 const express = require('express');
 const router = express.Router();
 const PathService = require('../services/pathService');
@@ -14,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Rota para retornar um path por id
+// Rota para retornar u m path por id
 router.get('/:id', async (req, res) => {
     try {
         const path = await pathService.getPathById(req.params.id);

@@ -1,12 +1,14 @@
+//models utilizados
 const Driver = require('../models/drivers');
 const User = require('../models/users');
 const Admin = require ('../models/admin')
 const dotenv = require('dotenv')
-dotenv.config({ path: './.env'});
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+dotenv.config({ path: './.env'});//para utilizar as variaveis de ambiente
+const bcrypt = require('bcrypt');//Criptografia de passwords
+const jwt = require('jsonwebtoken'); //tokens
 
 class AuthService {
+    //fazer login de admin
     async authenticateAdmin(name, password) {
         try {
             const admin = await Admin.findOne({ where: { name } });
@@ -14,21 +16,27 @@ class AuthService {
                 return null; // driver não encontrado
             }
 
-            // Verificar a senha
+            // Verificar a pass recebida com a pass criptografada na base de dados
             const isPasswordValid = await bcrypt.compare(password, admin.password);
             if (!isPasswordValid) {
-                return null; // Senha inválida
+                return null; // pass inválida
             }
 
             // Gerar um token JWT
-            const token = jwt.sign({ id: admin.id, name: admin.name, password: admin.password }, process.env.JWT_SECRET, { expiresIn: '12h' });
+            const token = jwt.sign(
+            { 
+                //valores a guardar no token
+                id: admin.id, 
+                name: admin.name, 
+                password: admin.password 
+            }, process.env.JWT_SECRET, { expiresIn: '12h' }); //expiresIn é o tempo que o token fica ativo
             return { token, admin };
         } catch (error) {
             console.error('Error authenticating admin:', error.message);
             throw error;
         }
     }
-
+    //login do motorista, é a mesma coisa que o admin
     async authenticateDriver(driverNumber, password) {
         try {
             const driver = await Driver.findOne({ where: { driverNumber } });
@@ -36,14 +44,17 @@ class AuthService {
                 return null; // driver não encontrado
             }
 
-            // Verificar a senha
+            // Verificar a pass
             const isPasswordValid = await bcrypt.compare(password, driver.password);
             if (!isPasswordValid) {
-                return null; // Senha inválida
+                return null; // pass inválida
             }
 
             // Gerar um token JWT
-            const token = jwt.sign({ id: driver.id, driverNumber: driver.driverNumber, name: driver.name }, process.env.JWT_SECRET, { expiresIn: '12h' });
+            const token = jwt.sign({ id: driver.id, 
+                driverNumber: driver.driverNumber, 
+                name: driver.name 
+            }, process.env.JWT_SECRET, { expiresIn: '12h' });
             return { token, driver };
         } catch (error) {
             console.error('Error authenticating driver:', error.message);
@@ -51,25 +62,7 @@ class AuthService {
         }
     }
     
-    // Create a new user
-    async signupUser(email, password, name) {
-        try {
-            const existingUser = await User.findOne({ where: { email } });
-            if (existingUser) {
-                throw new Error('User already exists'); // <---- Lançar erro ao invés de retornar null
-            }
-    
-            // Hash da senha
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await User.create({ email, password: hashedPassword, name });
-    
-            return newUser;
-        } catch (error) {
-            console.error('Error creating user:', error.message);
-            throw error;
-        }
-    }
-
+    // login do utilizador, identico ao de motorista e admin
     async authenticateUser(email, password) {
         try {
             const user = await User.findOne({ where: { email } });
@@ -97,6 +90,25 @@ class AuthService {
             throw error;
         }
     }
+
+    // signup utilizador, cria um novo utlizador
+    async signupUser(email, password, name) {
+        try {
+            const existingUser = await User.findOne({ where: { email } });
+            if (existingUser) {
+                throw new Error('User already exists'); 
+            }
+    
+            // criptografar password
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = await User.create({ email, password: hashedPassword, name });
+    
+            return newUser;
+        } catch (error) {
+            console.error('Error creating user:', error.message);
+            throw error;
+        }
+    }
     
     // Decodifica o token sem verificar a validade
     async decodeToken(token) {
@@ -108,7 +120,8 @@ class AuthService {
         }
     }
     
-    // Verifica se o token está autenticado e válido
+    // Verifica se o token ainda é válido, por ex
+    //se ele expirar, deixa de ser válido
     async isAuthenticated(token) {
         try {
         jwt.verify(token, JWT_SECRET);
@@ -129,6 +142,7 @@ class AuthService {
         }
     }
     
+    //verifica diretamente se o token esta ou nao expirado pelo tempo dele.
     async isTokenExpired(token) {
         try {
             const decoded = jwt.decode(token);
@@ -141,6 +155,7 @@ class AuthService {
         }
     }
 
+    //caso o utilizador queira alterar a sua password, os dados são tratados neste service
     async changeUserPassword(userId, currentPassword, newPassword) {
         try {
             const user = await User.findByPk(userId);
@@ -148,14 +163,14 @@ class AuthService {
                 return { success: false, message: "User not found" };
             }
     
-            // Verifica a senha atual
+            // Verifica a pass atual
             const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
             if (!isPasswordValid) {
-                console.log("Senha inválida");
+                // console.log("pass inválida");
                 return { success: false, message: "Current password is incorrect" };
             }
     
-            // Atualiza para a nova senha
+            // Atualiza para a nova pass
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             user.password = hashedPassword;
             await user.save();
@@ -168,10 +183,10 @@ class AuthService {
     }
     
     
-      // Método para alterar email
+      // caso o utilizador queira alterar o seu email
       async changeEmail(userId, newEmail) {
         try {
-          // Tenta encontrar o usuário na tabela Users
+          // Tenta encontrar o user na tabela Users
           let user = await User.findByPk(userId);
         if (!user) {
             return { success: false, message: "User not found" };
@@ -195,6 +210,7 @@ class AuthService {
         }
     }
 
+    // caso o utilizador queira eliminar a sua conta
     async deleteAccount(userId) {
         try {
           const user = await User.findByPk(userId);
@@ -203,7 +219,7 @@ class AuthService {
             return { success: false, message: "User not found" };
           }
       
-          await user.destroy(); // Remove o usuário do banco de dados
+          await user.destroy(); // Remove o user da base de dados
       
           return { success: true, message: "Account deleted successfully" };
         } catch (error) {
@@ -211,7 +227,8 @@ class AuthService {
           return { success: false, message: "Database error" };
         }
     }
-      
+    
+    //caso o motorista queira alterar a sua password
     async changeDriverPassword(driverId, currentPassword, newPassword) {
         try {
             const driver = await Driver.findByPk(driverId);
@@ -219,14 +236,14 @@ class AuthService {
                 return { success: false, message: "driver not found" };
             }
     
-            // Verifica a senha atual
+            // Verifica a pass atual
             const isPasswordValid = await bcrypt.compare(currentPassword, driver.password);
             if (!isPasswordValid) {
-                console.log("Senha inválida");
+                // console.log("pass inválida");
                 return { success: false, message: "Current password is incorrect" };
             }
     
-            // Atualiza para a nova senha
+            // Atualiza para a nova pass
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             driver.password = hashedPassword;
             await driver.save();

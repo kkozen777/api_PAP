@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database/db');
-// const Line = require('./lines'); // Importando o modelo Line
-// const Path = require('./paths'); // Importando o modelo Path
+const sequelize = require('../config/database/db'); //config base de dados
 
 const Route = sequelize.define('Route', {
     lineId: {
@@ -12,14 +10,6 @@ const Route = sequelize.define('Route', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    // route_begans_at: {
-    //     type: DataTypes.STRING,
-    //     allowNull: true,
-    // },
-    // route_finishes_at: {
-    //     type: DataTypes.STRING,
-    //     allowNull: true,
-    // },
     start_time: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -33,11 +23,8 @@ const Route = sequelize.define('Route', {
         allowNull: true,
     },
 }, {
-    tableName: 'routes',
+    tableName: 'routes', // nome da tabela
     timestamps: true,
 });
-
-// Route.belongsTo(Line, { foreignKey: 'lineId' });
-// Route.belongsTo(Path, { foreignKey: 'pathId' });
 
 module.exports = Route;

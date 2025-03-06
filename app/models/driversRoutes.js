@@ -15,7 +15,7 @@ const DriverRoute = sequelize.define('DriverRoute', {
         allowNull: false,
     },
 }, {
-    tableName: 'driverRoute',
+    tableName: 'driverRoute', // nome da tabela
     timestamps: true,  // Adiciona createdAt e updatedAt automaticamente
 });
 

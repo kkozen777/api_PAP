@@ -1,5 +1,5 @@
-const validate = require('../middlewares/validation.js'); // Import the middleware
-const verifyToken = require('../middlewares/verifyToken.js'); // Import the middleware
+const validate = require('../middlewares/validation.js'); // Importar o middleware
+const verifyToken = require('../middlewares/verifyToken.js'); // Importar o middleware
 
 const { createUserSchema, updateUserSchema, updateUserPasswordSchema } = require('../middlewares/schemas/users.js');
 const { updateDriverPasswordSchema } = require('../middlewares/schemas/drivers.js');
@@ -41,7 +41,6 @@ router.post('/loginAdmin', async (req, res) => {
 
 router.post('/loginUser', async (req, res) => {
     const { email, password } = req.body;
-
     try {
         const authResponse = await authService.authenticateUser(email, password);
         if (!authResponse) {
@@ -133,37 +132,37 @@ router.get('/getTokenValue/:key',verifyToken, (req, res) => {
 });
 
 router.post("/changeUserPassword", verifyToken, validate(updateUserPasswordSchema), async (req, res) => {
-    const userId = parseInt(req.id, 10);
-    const { currentPassword, newPassword } = req.body;
-    console.log(currentPassword)
-    console.log(newPassword)
-    try {
-      const result = await authService.changeUserPassword(userId, currentPassword, newPassword);
-      if (!result.success) {
-        return res.status(400).json({ message: result.message });
-      }
-      res.status(200).json({ message: "Password updated successfully" });
-    } catch (error) {
-      console.error("Error changing password:", error.message);
-      res.status(500).json({ message: "Internal server error" });
+  const userId = parseInt(req.id, 10);
+  const { currentPassword, newPassword } = req.body;
+  console.log(currentPassword)
+  console.log(newPassword)
+  try {
+    const result = await authService.changeUserPassword(userId, currentPassword, newPassword);
+    if (!result.success) {
+      return res.status(400).json({ message: result.message });
     }
-  });
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
   
   // Rota para alterar o email
   router.post("/changeEmail", verifyToken, validate(updateUserSchema), async (req, res) => {
-    const userId = parseInt(req.id, 10); 
-    const { email } = req.body;
-    try {
-      const result = await authService.changeEmail(userId, email);
-      if (!result.success) {
-        return res.status(400).json({ message: result.message });
-      }
-      res.status(200).json({ message: "Email updated successfully" });
-    } catch (error) {
-      console.error("Error changing email:", error.message);
-      res.status(500).json({ message: "Internal server error" });
+  const userId = parseInt(req.id, 10); 
+  const { email } = req.body;
+  try {
+    const result = await authService.changeEmail(userId, email);
+    if (!result.success) {
+      return res.status(400).json({ message: result.message });
     }
-  });
+    res.status(200).json({ message: "Email updated successfully" });
+  } catch (error) {
+    console.error("Error changing email:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 router.delete("/deleteAccount", verifyToken, async (req, res) => {
   try {

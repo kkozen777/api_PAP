@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database/db');
+const sequelize = require('../config/database/db'); //config da bd
 
 const Path = sequelize.define('Path', {
     name: {
@@ -7,11 +7,11 @@ const Path = sequelize.define('Path', {
         allowNull: false
     },
     coordinates: {
-        type: DataTypes.JSON, 
+        type: DataTypes.JSON, //guarda as coordenadas dos caminhos como JSON
         allowNull: true,
     },
 }, {
-    tableName: 'paths',
+    tableName: 'paths', //nome da tabela
     timestamps: true,
 });
 

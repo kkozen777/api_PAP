@@ -21,7 +21,7 @@ const DriverLocation = sequelize.define('DriverLocation', {
         defaultValue: DataTypes.NOW, // Define a data e hora atual
       },
     }, {
-      tableName: 'driversLocations',
+      tableName: 'driversLocations', //nome da tabela
       timestamps: false,
       indexes: [
         {

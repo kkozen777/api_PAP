@@ -1,4 +1,4 @@
-const verifyToken = require('../middlewares/verifyToken'); // Import the middleware
+const verifyToken = require('../middlewares/verifyToken'); // importa o middleware
 
 const DriverRouteService = require('../services/driverRouteService');
 const driverRouteService = new DriverRouteService();
@@ -13,14 +13,12 @@ router.get('/', async (req, res) => {
 router.post('/assign-route', verifyToken, async (req, res) => {
   const driverId = parseInt(req.id, 10);
   const { routeId } = req.body;
-  
   if (!routeId) {
     return res.status(400).json({
       success: false,
       message: 'routeId is required.',
     });
   }
-  
   try {
     const assignedRoute = await driverRouteService.assignRouteToDriver(driverId, routeId);
   

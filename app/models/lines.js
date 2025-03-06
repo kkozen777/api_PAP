@@ -15,7 +15,7 @@ const Line = sequelize.define('Line', {
         allowNull: true,
     }
 }, {
-    tableName: 'lines',
+    tableName: 'lines', //nome da tabela
     timestamps: true,
 });
 
